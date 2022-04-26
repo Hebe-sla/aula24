@@ -5,6 +5,9 @@ const Constraint = Matter.Constraint;
 var engine, world, backgroundImg;
 var bolasdecanhao=[]
 var canvas, angulo, tower, ground, canhao;
+var barco 
+var barcos=[]
+
 
 function preload() {
   backgroundImg = loadImage("./assets/background.gif");
@@ -29,7 +32,7 @@ function setup() {
   angleMode(DEGREES)
   angulo=20
   canhao=new Canhao(180,110,130,100,angulo)
-  
+  barco=new Barco(width,height-50,170,170,-70) 
 }
 
 function draw() {
@@ -45,10 +48,12 @@ function draw() {
   image(towerImage,tower.position.x, tower.position.y, 160, 310);
   pop();  
 
-  canhao.exibir()
+ 
   for(var i=0;i< bolasdecanhao.length; i=i+1){
 exibirbolas(bolasdecanhao[i])
-  }
+  } 
+  canhao.exibir()
+  exibirbarcos()
 }
 function keyReleased(){
   if(keyCode===DOWN_ARROW){
@@ -61,8 +66,43 @@ function keyReleased(){
       bolasdecanhao.push(boladecanhao)
     } 
   }
-  function exibirbolas(boladecanhao){
+  function exibirbolas(boladecanhao,indice){
     if(boladecanhao){
     boladecanhao.exibir()
+    if(boladecanhao.body.position.x>=width||boladecanhao.body.position.y>=height-50){
+    boladecanhao.remove(indice)
     }
+    }
+  }
+  function exibirbarcos(){
+    if(barcos.length>0){
+      if(barcos[barcos.length-1]===undefined||barcos[barcos.length-1].body.position.x<width-300){
+          var position=[-40,-60,-70,-20]
+          var aleatorio=random(position)
+          barco=new Barco(width,height-50,170,170,aleatorio)
+          barcos.push(barco)  
+      }
+      for(var i=0;i<barcos.length;i=i+1){
+        if(barcos[i]){
+           barcos[i].exibir()
+           Matter.Body.setVelocity(barcos[i].body,{x:-0.9,y:0})
+        }
+      }
+    }else{
+      barco=new Barco(width,height-50,170,170,-70)
+      barcos.push(barco)
+    }
+  }
+  function colisao(indice){
+    for(var i=0;i<barcos.length;i=i+1){
+      if(bolasdecanhao[indice]!==undefined&&barcos[i]!==undefined){
+          var colisao2=Matter.SAT.collides(bolasdecanhao[indice].body,barcos[i].body)
+          if(colisao2.collided){
+              barcos[i].remove(i)
+              Matter.Word.remove(world,bolasdecanhao[indice].body)
+            delete bolasdecanhao[indice]
+          }
+      }
+    }
+
   }
