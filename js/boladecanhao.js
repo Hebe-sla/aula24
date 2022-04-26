@@ -16,7 +16,7 @@ class Boladecanhao{
         pop()        
     }
     shoot() {
-        var newAngle = cannon.angulo - 28;
+        var newAngle = cannon.angle - 28;
         newAngle = newAngle *(3.14/180)
         var velocity = p5.Vector.fromAngle(newAngle);
         velocity.mult(0.5);
@@ -24,4 +24,11 @@ class Boladecanhao{
         Matter.Body.setVelocity(this.body, {
           x: velocity.x *(180/3.14), y: velocity.y * (180/3.14)});
       }
+      remove(){
+        Matter.Body.setVelocity(this.body, {x:0,y:0})
+        setTimeout(() => {
+            Matter.Word.remove(world,this.body)
+            delete boladecanhao[indice] 
+        }, 2000);
+    }
 }
